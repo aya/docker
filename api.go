@@ -550,7 +550,9 @@ func postImagesLoad(srv *Server, version float64, w http.ResponseWriter, r *http
 		return err
 	}
 
-	return srv.ImageLoad(r.Form.Get("fromSrc"), r.Body)
+	w.Header().Set("Content-Type", "application/json")
+	wf := utils.NewWriteFlusher(w)
+	return srv.ImageLoad(r.Form.Get("fromSrc"), r.Body, wf, utils.NewStreamFormatter(true))
 }
 
 func postContainersCreate(srv *Server, version float64, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
@@ -935,7 +937,7 @@ func postBuild(srv *Server, version float64, w http.ResponseWriter, r *http.Requ
 		}
 		context = c
 	} else if utils.IsURL(remoteURL) {
-		f, err := utils.Download(remoteURL, ioutil.Discard)
+		f, err := utils.Download(remoteURL)
 		if err != nil {
 			return err
 		}

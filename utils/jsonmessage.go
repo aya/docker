@@ -98,7 +98,7 @@ func DisplayJSONMessagesStream(in io.Reader, out io.Writer, isTerminal bool) err
 			}
 			return err
 		}
-		if (jm.Progress != nil || jm.ProgressMessage != "") && jm.ID != "" {
+		if jm.Progress != nil || jm.ProgressMessage != "" {
 			line, ok := ids[jm.ID]
 			if !ok {
 				line = len(ids)
