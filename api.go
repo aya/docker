@@ -546,7 +546,11 @@ func getImagesGet(srv *Server, version float64, w http.ResponseWriter, r *http.R
 }
 
 func postImagesLoad(srv *Server, version float64, w http.ResponseWriter, r *http.Request, vars map[string]string) error {
-	return srv.ImageLoad(r.Body)
+	if err := parseForm(r); err != nil {
+		return err
+	}
+
+	return srv.ImageLoad(r.Form.Get("fromSrc"), r.Body)
 }
 
 func postContainersCreate(srv *Server, version float64, w http.ResponseWriter, r *http.Request, vars map[string]string) error {

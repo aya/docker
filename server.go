@@ -322,7 +322,15 @@ func (srv *Server) exportImage(image *Image, tempdir string) error {
 
 // Loads a set of images into the repository. This is the complementary of ImageExport.
 // The input stream is an uncompressed tar ball containing images and metadata.
-func (srv *Server) ImageLoad(in io.Reader) error {
+func (srv *Server) ImageLoad(src string, in io.Reader) error {
+	if src != "" {
+		file, err := utils.Download(src, ioutil.Discard)
+		if err != nil {
+			return err
+		}
+		defer file.Body.Close()
+		in = file.Body
+	}
 	tmpImageDir, err := ioutil.TempDir("", "docker-import-")
 	if err != nil {
 		return err
