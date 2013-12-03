@@ -2178,11 +2178,16 @@ func (cli *DockerCli) CmdLoad(args ...string) error {
 	}
 
 	v := url.Values{}
-	v.Set("fromSrc", cmd.Arg(0))
+	src := cmd.Arg(0)
+	if strings.HasPrefix(src, "docker://") {
+		src = strings.Replace(src, "docker://", "http://", -1)
+		src = src[:strings.LastIndex(src, "/")] + "/images" + src[strings.LastIndex(src, "/"):] + "/get"
+	}
+	v.Set("fromSrc", src)
 
 	var in io.Reader
 
-	if cmd.Arg(0) == "-" {
+	if src == "-" {
 		in = cli.in
 	}
 
